@@ -51,15 +51,16 @@ var renderActiveNote = function() {
 
 // Get the note data from the inputs, save it to the db and update the view
 var handleNoteSave = function() {
+  console.log("saving note");
   var newNote = {
     title: $noteTitle.val(),
     text: $noteText.val()
   };
-
   saveNote(newNote).then(function(data) {
     getAndRenderNotes();
     renderActiveNote();
   });
+  location.reload();
 };
 
 // Delete the clicked note
@@ -70,15 +71,11 @@ var handleNoteDelete = function(event) {
   var note = $(this)
     .parent(".list-group-item")
     .data();
-
-  if (activeNote.id === note.id) {
-    activeNote = {};
-  }
-
-  deleteNote(note.id).then(function() {
+  deleteNote(note).then(function() {
     getAndRenderNotes();
     renderActiveNote();
   });
+  location.reload();
 };
 
 // Sets the activeNote and displays it
@@ -114,6 +111,7 @@ var renderNoteList = function(notes) {
 
     var $li = $("<li class='list-group-item'>").data(note);
     var $span = $("<span>").text(note.title);
+    $span.attr("id", note.id);
     var $delBtn = $(
       "<i class='fas fa-trash-alt float-right text-danger delete-note'>"
     );
