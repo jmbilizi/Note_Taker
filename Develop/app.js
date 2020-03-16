@@ -58,49 +58,26 @@ app.post("/api/notes", async function(req, res) {
 
   const result = Joi.validate(req.body, schema);
   if (result.error) {
-    res.status(404).send(result.error.details[0].message);
-    return;
+    res.send("Title must be 3 characters and text must be 5 characters");
   } else {
     data.push(note);
 
     writeFileAsync("./db/db.json", JSON.stringify(data), "UTF-8");
   }
 });
-
+//delete route
 app.delete("/api/notes/:id", async function(req, res) {
-
-  const data = await readFile();
+  var data = await readFile();
   let id = req.params.id;
 
-  function deleteNote(id) {
-    return data.then(
-      data.filter(item => {
-        fileredNotes = item.id !== parseInt(id);
-        console.log(fileredNotes);
-        fs.writeFileAsync("./db/db.json", JSON.stringify(filteredNotes), "UTF-8");
-      })
-    );
+  function deleteNote() {
+    data = data.filter(note => note.id != id);
+    writeFileAsync("./db/db.json", JSON.stringify(data), "UTF-8");
+    res.json(data);
   }
-  deleteNote(id);
+  deleteNote();
 });
 
-// app.delete("/api/notes", async function(req, res) {
-//   let note = {
-//     title: req.body.title,
-//     text: req.body.text
-//   };
-
-//   const data = await readFile();
-
-//   data.push(note);
-
-//   console.log(data);
-
-//   writeFileAsync("./db/db.json", JSON.stringify(data), "UTF-8");
-//   res.end();
-// });
-
-//start the server
 app.listen(PORT, () => {
   console.log("App listening on PORT " + PORT);
 });

@@ -71,7 +71,7 @@ var handleNoteDelete = function(event) {
   var note = $(this)
     .parent(".list-group-item")
     .data();
-  deleteNote(note).then(function() {
+  deleteNote(note.id).then(function() {
     getAndRenderNotes();
     renderActiveNote();
   });
