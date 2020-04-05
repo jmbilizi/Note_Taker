@@ -18,20 +18,16 @@ router.get("/notes", async (req, res) => {
 });
 
 //GET `/api/notes` - Should read the `db.json` file and return all saved notes as JSON.
-router.post("/notes", async function(req, res) {
+router.post("/notes", async function (req, res) {
   const data = await readFile();
   let note = {
     id: data.length + 1,
     title: req.body.title,
-    text: req.body.text
+    text: req.body.text,
   };
   const schema = {
-    title: Joi.string()
-      .min(3)
-      .required(),
-    text: Joi.string()
-      .min(5)
-      .required()
+    title: Joi.string().min(3).required(),
+    text: Joi.string().min(5).required(),
   };
 
   const result = Joi.validate(req.body, schema);
@@ -44,16 +40,39 @@ router.post("/notes", async function(req, res) {
 });
 
 //delete route
-router.delete("/notes/:id", async function(req, res) {
+router.delete("/notes/:id", async function (req, res) {
   var data = await readFile();
   let id = req.params.id;
 
   function deleteNote() {
-    data = data.filter(note => note.id != id);
+    data = data.filter((note) => note.id != id);
     writeFileAsync("db/db.json", JSON.stringify(data), "UTF-8");
     res.json(data);
   }
   deleteNote();
+});
+//update route
+router.put("/notes/:id", async function (req, res) {
+  var data = await readFile();
+  let id = req.params.id;
+
+  let note = {
+    title: req.body.title,
+    text: req.body.text,
+  };
+  const schema = {
+    title: Joi.string().min(3).required(),
+    text: Joi.string().min(5).required(),
+  };
+
+  const result = Joi.validate(req.body, schema);
+  if (result.error) {
+    res.send("Title must be 3 characters and text must be 5 characters");
+  } else {
+    data.push(note);
+    writeFileAsync("db/db.json", JSON.stringify(data), "UTF-8");
+  }
+  updateNote();
 });
 
 module.exports = router;
