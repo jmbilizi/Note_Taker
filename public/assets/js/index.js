@@ -1,4 +1,5 @@
 var $noteTitle = $(".note-title");
+var $noteId = $(".note-id").hide();
 var $noteText = $(".note-textarea");
 var $saveNoteBtn = $(".save-note");
 var $newNoteBtn = $(".new-note");
@@ -45,25 +46,36 @@ var renderActiveNote = function () {
   $saveNoteBtn.show();
 
   if (activeNote.id) {
+    $noteId.val(activeNote.id);
     $noteTitle.val(activeNote.title);
     $noteText.val(activeNote.text);
   } else {
     $noteTitle.val("");
     $noteText.val("");
+    $noteId.val("");
   }
 };
 
 // Get the note data from the inputs, save it to the db and update the view
 var handleNoteSave = function () {
-  console.log("saving note");
   var newNote = {
     title: $noteTitle.val(),
     text: $noteText.val(),
   };
-  saveNote(newNote).then(function () {
-    getAndRenderNotes();
-    renderActiveNote();
-  });
+  const id = $noteId.val();
+  console.warn(id);
+  if (id) {
+    console.log("update note");
+    updateNote(id, newNote);
+  } else {
+    console.log("saving note");
+    console.log(newNote);
+    saveNote(newNote).then(function () {
+      getAndRenderNotes();
+      renderActiveNote();
+    });
+  }
+
   location.reload();
 };
 

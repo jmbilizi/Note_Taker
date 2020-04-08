@@ -20,6 +20,7 @@ router.get("/notes", async (req, res) => {
 //GET `/api/notes` - Should read the `db.json` file and return all saved notes as JSON.
 router.post("/notes", async function (req, res) {
   const data = await readFile();
+  console.log({ data, body: req.body });
   let note = {
     id: data.length + 1,
     title: req.body.title,
@@ -55,8 +56,11 @@ router.delete("/notes/:id", async function (req, res) {
 router.put("/notes/:id", async function (req, res) {
   var data = await readFile();
   let id = req.params.id;
-
+  // newdata = date .filter ( id)
+  data = data.filter((note) => note.id != id);
+  console.log("Update " + id);
   let note = {
+    id: req.params.id,
     title: req.body.title,
     text: req.body.text,
   };
@@ -64,7 +68,6 @@ router.put("/notes/:id", async function (req, res) {
     title: Joi.string().min(3).required(),
     text: Joi.string().min(5).required(),
   };
-
   const result = Joi.validate(req.body, schema);
   if (result.error) {
     res.send("Title must be 3 characters and text must be 5 characters");
@@ -72,7 +75,6 @@ router.put("/notes/:id", async function (req, res) {
     data.push(note);
     writeFileAsync("db/db.json", JSON.stringify(data), "UTF-8");
   }
-  updateNote();
 });
 
 module.exports = router;
